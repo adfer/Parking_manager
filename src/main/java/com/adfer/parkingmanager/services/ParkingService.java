@@ -17,9 +17,4 @@ public interface ParkingService {
 
     void removeParking(Parking parkingId);
 
-    void addPermission(ParkingPermission parkingPermission1);
-
-    void removePermission(ParkingPermission parkingPermission3);
-
-    List<Car> getAllowedCars(Parking parking);
 }

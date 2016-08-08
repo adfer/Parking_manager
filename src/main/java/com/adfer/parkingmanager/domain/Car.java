@@ -12,6 +12,8 @@ public class Car {
     @GeneratedValue
     private Long carId;
 
+    private String plateNumber;
+
     public Long getCarId() {
         return carId;
     }
@@ -20,4 +22,11 @@ public class Car {
         this.carId = carId;
     }
 
+    public String getPlateNumber() {
+        return plateNumber;
+    }
+
+    public void setPlateNumber(String plateNumber) {
+        this.plateNumber = plateNumber;
+    }
 }

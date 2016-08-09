@@ -15,23 +15,36 @@ import java.util.List;
 @RestController
 public class CarController {
 
-  @Autowired
-  private CarService carService;
+    @Autowired
+    private CarService carService;
 
-  @RequestMapping(value = "/cars/", method = RequestMethod.POST)
-  public ResponseEntity<Void> addNewCar(@RequestBody Car car) {
-    carService.addCar(car);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
+    @RequestMapping(value = "/cars/", method = RequestMethod.POST)
+    public ResponseEntity<Void> addNewCar(@RequestBody Car car) {
+        carService.addCar(car);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-  @RequestMapping(value = "/cars/", method = RequestMethod.GET)
-  public List<Car> getCars() {
-    return carService.getAllCars();
-  }
+    @RequestMapping(value = "/cars/", method = RequestMethod.GET)
+    public List<Car> getCars() {
+        return carService.getAllCars();
+    }
 
-  @RequestMapping(value = "/cars/{carId}", method = RequestMethod.GET)
-  public Car getCar(@PathVariable Long carId) {
-    return carService.getCar(carId);
-  }
+    @RequestMapping(value = "/cars/{carId}", method = RequestMethod.GET)
+    public ResponseEntity<Car> getCar(@PathVariable Long carId) {
+        Car car = carService.getCar(carId);
+        if (car == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(car, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/cars/", method = RequestMethod.PUT)
+    public ResponseEntity<Car> changeCar(@RequestBody Car car) {
+        Car updatedCar = carService.updateCar(car);
+        if (updatedCar == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(updatedCar, HttpStatus.OK);
+    }
 
 }

@@ -16,10 +16,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,52 +28,81 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Test
 public class ParkingControllerTest extends AbstractTestNGSpringContextTests {
 
-  @Autowired
-  private ParkingService parkingService;
+    @Autowired
+    private ParkingService parkingService;
 
-  @Autowired
-  private ParkingRepository parkingRepository;
+    @Autowired
+    private ParkingRepository parkingRepository;
 
-  @Autowired
-  private WebApplicationContext webApplicationContext;
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
-  private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-  private ObjectMapper mapper;
+    private ObjectMapper mapper;
 
-  @BeforeClass
-  public void setUp() {
-    mapper = new ObjectMapper();
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-  }
+    @BeforeClass
+    public void setUp() {
+        mapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
 
-  @AfterMethod
-  public void cleanUp() {
-    parkingRepository.deleteAll();
-  }
+    @AfterMethod
+    public void cleanUp() {
+        parkingRepository.deleteAll();
+    }
 
 
-  public void shouldCreateOneParking() throws Exception {
-    //given
-    Parking parking = new Parking("Parking 1");
+    public void shouldCreateOneParking() throws Exception {
+        //given
+        Parking parking = new Parking("Parking 1");
 
-    //execute
-    mockMvc.perform(post("/parkings/")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(mapper.writeValueAsBytes(parking)))
-        .andExpect(status().isOk());
-  }
+        //execute
+        mockMvc.perform(post("/parkings/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(parking)))
+                .andExpect(status().isOk());
+    }
 
-  public void shouldReturnOneParking() throws Exception {
-    //given
-    Parking parking = new Parking("Parking 1");
-    parkingRepository.save(parking);
+    public void shouldReturnOneParking() throws Exception {
+        //given
+        Parking parking = new Parking("Parking 1");
+        parkingRepository.save(parking);
 
-    //execute
-    mockMvc.perform(get("/parkings/" + parking.getId()))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(parking.getId().intValue())))
-        .andExpect(jsonPath("$.parkingName", is("Parking 1")));
-  }
+        //execute
+        mockMvc.perform(get("/parkings/" + parking.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(parking.getId().intValue())))
+                .andExpect(jsonPath("$.parkingName", is("Parking 1")));
+    }
+
+    public void shouldUpdateParking() throws Exception {
+        //given
+        Parking parking = new Parking("Parking 1");
+        parkingRepository.save(parking);
+
+        String expectedParkingName = "CHANGED_PARKING_NAME";
+        parking.setParkingName(expectedParkingName);
+
+        //execute
+        mockMvc.perform(put("/parkings/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(parking)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(parking.getId().intValue())))
+                .andExpect(jsonPath("$.parkingName", is(expectedParkingName)));
+    }
+
+    public void testUpdateParking_shouldReturnNotFound() throws Exception {
+        //given
+        Parking parking = new Parking();
+
+        //execute
+        mockMvc.perform(put("/parkings/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(parking)))
+                .andExpect(status().isNotFound());
+    }
+
 
 }

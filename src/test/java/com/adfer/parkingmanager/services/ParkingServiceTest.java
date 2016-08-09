@@ -51,7 +51,7 @@ public class ParkingServiceTest extends AbstractTestNGSpringContextTests {
         assertNotNull(persParking);
     }
 
-    public void shouldReturnPersistentParking() throws Exception {
+    public void shouldReturnParking() throws Exception {
         //given
         Parking parking = new Parking();
         parkingService.createParking(parking);
@@ -70,6 +70,35 @@ public class ParkingServiceTest extends AbstractTestNGSpringContextTests {
         //verify
         assertNull(persParking);
     }
+
+    public void shouldUpdateParking() throws Exception {
+        //given
+        Parking parking = new Parking();
+        parking.setParkingName("PARKING_NAME");
+        parkingService.createParking(parking);
+
+        String expectedParkingName = "CHANGED_PARKING_NAME";
+        parking.setParkingName(expectedParkingName);
+
+        //execute
+        Parking changedParking = parkingService.updateParking(parking);
+
+        //verify
+        assertEquals(changedParking.getId(), parking.getId());
+        assertEquals(changedParking.getParkingName(), expectedParkingName);
+    }
+
+    public void testUpdateParking_shouldReturnNull() throws Exception {
+        //given
+        Parking parking = new Parking();
+
+        //execute
+        Parking changedParking = parkingService.updateParking(parking);
+
+        //verify
+        assertNull(changedParking);
+    }
+
 
     public void shouldRemoveParking() throws Exception{
         //given

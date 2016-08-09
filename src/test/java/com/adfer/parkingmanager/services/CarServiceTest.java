@@ -28,11 +28,11 @@ public class CarServiceTest extends AbstractTestNGSpringContextTests {
     private CarRepository carRepository;
 
     @AfterMethod
-    public void cleanUp(){
+    public void cleanUp() {
         carRepository.deleteAll();
     }
 
-    public void shouldCreateCar() throws Exception{
+    public void shouldCreateCar() throws Exception {
         //given
         Car car = new Car();
 
@@ -44,7 +44,7 @@ public class CarServiceTest extends AbstractTestNGSpringContextTests {
         assertEquals(persCar.getCarId(), car.getCarId());
     }
 
-    public void shouldReturnOneCar() throws Exception{
+    public void shouldReturnOneCar() throws Exception {
         //given
         Car car1 = new Car();
         Car car2 = new Car();
@@ -59,7 +59,7 @@ public class CarServiceTest extends AbstractTestNGSpringContextTests {
         assertNotEquals(persCar1.getCarId(), car2.getCarId());
     }
 
-    public void shouldReturnNull_carNotFound(){
+    public void shouldReturnNull_carNotFound() {
         //given
         Car car1 = new Car();
         Car car2 = new Car();
@@ -73,7 +73,35 @@ public class CarServiceTest extends AbstractTestNGSpringContextTests {
         assertNull(persCar);
     }
 
-    public void shouldRemoveCar() throws Exception{
+    public void shouldUpdateCar() throws Exception {
+        //given
+        Car car = new Car();
+        car.setPlateNumber("PLATE_NUMBER");
+        carService.addCar(car);
+
+        String expectedPlateNumber = "CHANGED_PLATE_NUMBER";
+        car.setPlateNumber(expectedPlateNumber);
+
+        //execute
+        Car changedCar = carService.updateCar(car);
+
+        //verify
+        assertEquals(changedCar.getCarId(), car.getCarId());
+        assertEquals(changedCar.getPlateNumber(), expectedPlateNumber);
+    }
+
+    public void testChangeCar_shouldReturnNull() {
+        //given
+        Car car = new Car();
+
+        //execute
+        Car changedCar = carService.updateCar(car);
+
+        //verify
+        assertNull(changedCar);
+    }
+
+    public void shouldRemoveCar() throws Exception {
         //given
         Car car1 = new Car();
         Car car2 = new Car();
@@ -88,7 +116,7 @@ public class CarServiceTest extends AbstractTestNGSpringContextTests {
         assertNull(removedCar);
     }
 
-    public void shouldReturnAllCars() throws Exception{
+    public void shouldReturnAllCars() throws Exception {
         //given
         Car car1 = new Car();
         Car car2 = new Car();
@@ -101,7 +129,7 @@ public class CarServiceTest extends AbstractTestNGSpringContextTests {
         List<Car> cars = carService.getAllCars();
 
         //verify
-        assertTrue(cars.size()==3);
+        assertTrue(cars.size() == 3);
     }
 
 }

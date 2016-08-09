@@ -25,6 +25,9 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Car getCar(Long carId) {
+        if(carId==null){
+            return null;
+        }
         return carRepository.findOne(carId);
     }
 
@@ -38,5 +41,14 @@ public class CarServiceImpl implements CarService {
         List<Car> cars = new ArrayList<>();
         carRepository.findAll().iterator().forEachRemaining(car -> cars.add(car));
         return cars;
+    }
+
+    @Override
+    public Car updateCar(Car car) {
+        Car persCar = getCar(car.getCarId());
+        if(persCar==null){
+            return null;
+        }
+        return carRepository.save(car);
     }
 }

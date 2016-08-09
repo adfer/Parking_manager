@@ -17,4 +17,5 @@ public interface ParkingService {
 
     void removeParking(Parking parkingId);
 
+    Parking updateParking(Parking parking);
 }

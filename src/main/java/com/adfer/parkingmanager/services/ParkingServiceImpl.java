@@ -20,6 +20,9 @@ public class ParkingServiceImpl implements ParkingService {
 
     @Override
     public Parking getParking(Long parkingId) {
+        if(parkingId==null || parkingId <= 0){
+            return null;
+        }
         return parkingRepository.findOne(parkingId);
     }
 
@@ -31,6 +34,15 @@ public class ParkingServiceImpl implements ParkingService {
     @Override
     public void removeParking(Parking parking) {
         parkingRepository.delete(parking);
+    }
+
+    @Override
+    public Parking updateParking(Parking parking) {
+        Parking persParking = getParking(parking.getId());
+        if(persParking==null){
+            return null;
+        }
+        return parkingRepository.save(parking);
     }
 
 }

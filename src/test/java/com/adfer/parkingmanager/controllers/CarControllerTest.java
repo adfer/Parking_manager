@@ -19,9 +19,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -78,12 +78,11 @@ public class CarControllerTest extends AbstractTestNGSpringContextTests {
                 .andExpect(jsonPath("$.carId", is(car.getCarId().intValue())));
     }
 
-    public void shouldReturnEmptyResponse_carNotFound() throws Exception {
+    public void shouldReturnNotFoundStatus_carNotFound() throws Exception {
         //execute
         mockMvc.perform(get("/cars/" + -1)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string(isEmptyOrNullString()));
+                .andExpect(status().isNotFound());
     }
 
     public void shouldReturnBadRequest_incorrectCarId() throws Exception {
@@ -117,6 +116,39 @@ public class CarControllerTest extends AbstractTestNGSpringContextTests {
                 .andExpect(jsonPath("$[1].plateNumber", isIn(expectedPlateNumber)))
                 .andExpect(jsonPath("$[2].plateNumber", isIn(expectedPlateNumber)));
 
+    }
+
+    public void shouldChangeCarData() throws Exception {
+        //given
+        mapper = new ObjectMapper();
+
+        Car car = new Car();
+        car.setPlateNumber("PLATE_NUMBER");
+        carRepository.save(car);
+
+        Car changedCar = new Car();
+        changedCar.setCarId(car.getCarId());
+        changedCar.setPlateNumber("UPDATED_PLATE_NUMBER");
+
+        //execute
+        mockMvc.perform(put("/cars/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(changedCar)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.carId", is(car.getCarId().intValue())))
+                .andExpect(jsonPath("$.plateNumber", is("UPDATED_PLATE_NUMBER")));
+    }
+
+    public void testChangeCarData_shouldReturnNotFound() throws Exception {
+        //given
+        mapper = new ObjectMapper();
+        Car car = new Car();
+
+        //execute
+        mockMvc.perform(put("/cars/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(car)))
+                .andExpect(status().isNotFound());
     }
 
 }

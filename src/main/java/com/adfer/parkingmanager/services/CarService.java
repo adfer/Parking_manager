@@ -15,4 +15,6 @@ public interface CarService {
     void removeCar(Car car1);
 
     List<Car> getAllCars();
+
+    Car updateCar(Car car);
 }

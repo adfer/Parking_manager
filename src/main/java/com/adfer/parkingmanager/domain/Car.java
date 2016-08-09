@@ -1,6 +1,8 @@
 package com.adfer.parkingmanager.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * Created by adrianferenc on 07.08.2016.
@@ -13,6 +15,13 @@ public class Car {
     private Long carId;
 
     private String plateNumber;
+
+    public Car() {
+    }
+
+    public Car(String plateNumber) {
+        this.plateNumber = plateNumber;
+    }
 
     public Long getCarId() {
         return carId;

@@ -11,9 +11,9 @@ import java.util.List;
  */
 public interface ParkingPermissionService {
 
-    void addPermission(ParkingPermission parkingPermission1);
+    void addPermission(ParkingPermission parkingPermission);
 
-    void removePermission(ParkingPermission parkingPermission3);
+    void removePermission(ParkingPermission parkingPermission);
 
     List<Car> getAllowedCars(Parking parking);
 
